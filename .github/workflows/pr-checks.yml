@@ -1,0 +1,70 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint:
+    name: Super-Linter
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Super-Linter needs the full commit history to lint only the changed files
+          fetch-depth: 0
+
+      - name: Run Super-Linter
+        uses: super-linter/super-linter@v8
+        env:
+          VALIDATE_ALL_CODEBASE: false # Ensures it only lints new/modified files
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Python: ruff covers lint + import order in one fast tool. The
+          # others (black, pylint, flake8, isort, mypy) aren't part of this
+          # project's toolchain yet and would just add unconfigured,
+          # opinionated noise on top of code that's never been run through
+          # them - re-enable individually once adopted deliberately.
+          VALIDATE_PYTHON_RUFF: true
+          VALIDATE_PYTHON_BLACK: false
+          VALIDATE_PYTHON_RUFF_FORMAT: false
+          VALIDATE_PYTHON_PYLINT: false
+          VALIDATE_PYTHON_FLAKE8: false
+          VALIDATE_PYTHON_ISORT: false
+          VALIDATE_PYTHON_MYPY: false
+
+          # JS/TS: the frontend already lints with oxlint (see
+          # frontend/.oxlintrc.json, `npm run lint`) - Super-Linter's
+          # ESLint/Prettier would duplicate that with a different,
+          # unconfigured rule set instead of complementing it.
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_JAVASCRIPT_PRETTIER: false
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_PRETTIER: false
+
+  security:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          # Both are build-mode "none" (interpreted), so one init/analyze
+          # pair covers both in a single job/check instead of splitting
+          # into per-language matrix checks.
+          languages: python, javascript-typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4

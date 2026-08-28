@@ -10,6 +10,17 @@ chosen.
 
 ### Added
 
+- PR checks workflow (`.github/workflows/pr-checks.yml`) - Super-Linter and
+  a CodeQL security scan (Python + JS/TS), run on every pull request
+  targeting `main`.
+
+### Changed
+
+- `docs/SECURITY.md` now lists a direct email contact alongside GitHub
+  Security Advisories.
+
+### Added
+
 - Docker image published to `ghcr.io/evictarr/evictarr` via GitHub Actions
   on every version tag (`vX.Y[.Z]`), built for `linux/amd64` and
   `linux/arm64`, tagged with both the release version and `latest`.

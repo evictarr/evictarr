@@ -12,8 +12,9 @@ This opens a private disclosure with the maintainer - nothing is visible
 publicly until it's resolved and you both agree to disclose it.
 
 If that link doesn't work (e.g. advisories aren't enabled on the repo yet),
-open a regular issue asking to be contacted privately, without including
-any exploit details or proof-of-concept in the issue itself.
+email **spinu.petru.boris@gmail.com** directly, or open a regular issue
+asking to be contacted privately, without including any exploit details or
+proof-of-concept in the issue itself.
 
 ## What counts as a security issue
 
