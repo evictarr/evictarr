@@ -38,12 +38,12 @@ async def get_poster(jellyfin_item_id: str, db: AsyncSession = Depends(get_db)):
         client = integration_service.build_client(integration)
         image = await client.get(f"/Items/{jellyfin_item_id}/Images/Primary")
     except IntegrationError as exc:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Poster unavailable") from exc
     content_type = image.headers.get("content-type", "image/jpeg").split(";")[0].strip().lower()
     if content_type not in _ALLOWED_IMAGE_CONTENT_TYPES:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, "Unexpected content type from Jellyfin")
     return Response(
         content=image.content,
         media_type=content_type,
-        headers={"Cache-Control": "public, max-age=86400", "X-Content-Type-Options": "nosniff"},
+        headers={"Cache-Control": "private, max-age=86400", "X-Content-Type-Options": "nosniff"},
     )
