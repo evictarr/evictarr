@@ -10,12 +10,25 @@ chosen.
 
 ### Added
 
+- PR checks workflow (`.github/workflows/pr-checks.yml`) - Super-Linter and
+  a CodeQL security scan (Python + JS/TS), run on every pull request
+  targeting `main`. Actions are pinned to commit SHA, checkouts set
+  `persist-credentials: false`, and a restrictive top-level `permissions:`
+  is set per Checkov/`zizmor`'s findings on the workflow itself.
 - Docker image published to `ghcr.io/evictarr/evictarr` via GitHub Actions
   on every version tag (`vX.Y[.Z]`), built for `linux/amd64` and
   `linux/arm64`, tagged with both the release version and `latest`.
+- `docker/Dockerfile` now has a `HEALTHCHECK` instruction.
+- `.markdownlint.json` (allow the same heading text across different
+  changelog version sections) and `.trivyignore` (the intentional
+  no-`USER` Dockerfile design - PUID/PGID remap needs root at startup,
+  see `docker/entrypoint.sh`) added to match this repo's actual
+  conventions instead of tools' unconfigured defaults.
 
 ### Changed
 
+- `docs/SECURITY.md` now lists a direct email contact alongside GitHub
+  Security Advisories.
 - `CONFIG_DIR` and `DATABASE_URL` now default to `/config` inside the
   Docker image, so the database and auto-generated secrets persist even if
   a compose file doesn't set them explicitly.

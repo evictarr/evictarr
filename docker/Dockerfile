@@ -10,9 +10,21 @@ RUN npm run build
 FROM python:3.12-slim AS runtime
 ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 
+# No static USER: this image intentionally starts as root so entrypoint.sh
+# can remap the "evictarr" user to the host's PUID/PGID and chown /config,
+# then gosu drops to that unprivileged user for the actual app process (see
+# entrypoint.sh) - the same pattern linuxserver.io images use for host-UID
+# mapping. Flagged by security scanners as "no USER set" (Checkov
+# CKV_DOCKER_3 below, Trivy AVD-DS-0002 in .trivyignore); that's expected.
+#checkov:skip=CKV_DOCKER_3: root startup is required to remap to the host's PUID/PGID before gosu drops privileges - see entrypoint.sh
+
 # gosu drops root privileges after entrypoint.sh remaps the "evictarr" user
 # to the requested PUID/PGID - the initial uid/gid here is just a
-# placeholder, overwritten at container start.
+# placeholder, overwritten at container start. Left unpinned intentionally:
+# python:3.12-slim's apt mirror only keeps the latest published version per
+# suite, so a hard version pin here would eventually 404 and break the
+# build rather than making it reproducible.
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gosu \
     && rm -rf /var/lib/apt/lists/* \
@@ -41,4 +53,7 @@ RUN mkdir -p /config
 VOLUME ["/config"]
 
 EXPOSE 4378
+# python:3.12-slim has no curl/wget, but python itself is always present.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=5 \
+    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4378/', timeout=3)"]
 ENTRYPOINT ["/app/entrypoint.sh"]
