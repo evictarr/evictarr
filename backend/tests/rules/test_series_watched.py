@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from app.db.models import Rule, RuleType, SeriesGranularity, ServiceName, ThresholdUnit
+from app.db.models import Rule, RuleType, Run, RunType, SeriesGranularity, ServiceName, ThresholdUnit
 from app.rules import series_watched
 
 
@@ -125,7 +125,12 @@ async def test_matched_season_is_staged_with_jellyfin_item_id(db_session):
     await db_session.commit()
     await db_session.refresh(rule)
 
-    result = await series_watched.evaluate(db_session, None, rule, ctx)
+    run = Run(run_type=RunType.manual, triggered_by="test")
+    db_session.add(run)
+    await db_session.commit()
+    await db_session.refresh(run)
+
+    result = await series_watched.evaluate(db_session, run.id, rule, ctx)
 
     assert result.matched == 1
     staged = (await db_session.execute(select(PendingDeletion))).scalar_one()

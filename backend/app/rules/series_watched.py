@@ -81,20 +81,20 @@ async def evaluate(
                                 "hours_remaining": None,
                             }
                         )
-                    elif run_id is not None:
+                    else:
                         await log_event(db, run_id, rule.id, EventLevel.skip, title, "favorited")
                     result.skipped += 1
                     continue
 
                 if not tvdb:
-                    if not dry_run and run_id is not None:
+                    if not dry_run:
                         await log_event(db, run_id, rule.id, EventLevel.error, title, "Jellyfin series has no TVDB id")
                     result.skipped += 1
                     continue
 
                 sonarr_entry = find_by_tvdb_id(sonarr_series, tvdb)
                 if sonarr_entry is None:
-                    if not dry_run and run_id is not None:
+                    if not dry_run:
                         await log_event(db, run_id, rule.id, EventLevel.error, title, "series not found in Sonarr")
                     result.skipped += 1
                     continue
@@ -111,8 +111,7 @@ async def evaluate(
                 if dry_run:
                     result.matched += 1
                     continue
-                if run_id is not None:
-                    await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
+                await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
                 await stage(db, rule.id, PendingMediaType.season, title, external_ids, f"season:{tvdb}:{season_number}")
                 result.matched += 1
         return result
@@ -164,20 +163,20 @@ async def evaluate(
                         "hours_remaining": None,
                     }
                 )
-            elif run_id is not None:
+            else:
                 await log_event(db, run_id, rule.id, EventLevel.skip, title, "favorited")
             result.skipped += 1
             continue
 
         if not tvdb:
-            if not dry_run and run_id is not None:
+            if not dry_run:
                 await log_event(db, run_id, rule.id, EventLevel.error, title, "Jellyfin item has no TVDB id")
             result.skipped += 1
             continue
 
         sonarr_entry = find_by_tvdb_id(sonarr_series, tvdb)
         if sonarr_entry is None:
-            if not dry_run and run_id is not None:
+            if not dry_run:
                 await log_event(db, run_id, rule.id, EventLevel.error, title, "not found in Sonarr")
             result.skipped += 1
             continue
@@ -193,8 +192,7 @@ async def evaluate(
         if dry_run:
             result.matched += 1
             continue
-        if run_id is not None:
-            await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
+        await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
         await stage(db, rule.id, PendingMediaType.series, title, external_ids, f"series:{tvdb}")
         result.matched += 1
 
