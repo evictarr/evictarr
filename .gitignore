@@ -25,3 +25,7 @@ frontend/dist/
 
 # Editors / OS
 .DS_Store
+
+# Local design specs/plans (superpowers skill output) - working notes,
+# not meant to ship in the public repo.
+docs/superpowers/
