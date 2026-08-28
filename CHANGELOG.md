@@ -35,6 +35,12 @@ chosen.
 - `docker-compose.yml.example` now pulls the published image instead of
   building from source; building from source is still documented for local
   development.
+- Rules page: the "Run this rule now" button now shows a spinning-loader
+  animation while the rule is actually running, instead of no visual
+  feedback.
+- Dashboard: replaced the static placeholder with a real status board -
+  approaching-cleanup and exempt (favorited) watched items, plus a
+  pending-deletion preview, each with Jellyfin poster art.
 
 ### Fixed
 
