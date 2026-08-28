@@ -4,6 +4,12 @@ on:
   pull_request:
     branches: ["main"]
 
+# Restrictive default so any job added later without its own explicit
+# `permissions:` block doesn't silently inherit broad token access
+# (Checkov CKV2_GHA_1). Each job below still declares exactly what it needs.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Super-Linter

@@ -15,13 +15,16 @@ ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 # then gosu drops to that unprivileged user for the actual app process (see
 # entrypoint.sh) - the same pattern linuxserver.io images use for host-UID
 # mapping. Flagged by security scanners as "no USER set" (Checkov
-# CKV_DOCKER_3, Trivy AVD-DS-0002 - suppressed in .checkov.yaml/.trivyignore
-# with this same rationale); that's expected.
+# CKV_DOCKER_3 below, Trivy AVD-DS-0002 in .trivyignore); that's expected.
 #checkov:skip=CKV_DOCKER_3: root startup is required to remap to the host's PUID/PGID before gosu drops privileges - see entrypoint.sh
 
 # gosu drops root privileges after entrypoint.sh remaps the "evictarr" user
 # to the requested PUID/PGID - the initial uid/gid here is just a
 # placeholder, overwritten at container start.
+# hadolint ignore=DL3008 # unpinned intentionally: python:3.12-slim's apt
+# mirror only keeps the latest published version per suite, so a hard pin
+# here would eventually 404 and break the build rather than making it
+# reproducible.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gosu \
     && rm -rf /var/lib/apt/lists/* \

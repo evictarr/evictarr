@@ -12,9 +12,9 @@ chosen.
 
 - PR checks workflow (`.github/workflows/pr-checks.yml`) - Super-Linter and
   a CodeQL security scan (Python + JS/TS), run on every pull request
-  targeting `main`. Actions are pinned to commit SHA and checkouts set
-  `persist-credentials: false` per `zizmor`'s findings on the workflow
-  itself.
+  targeting `main`. Actions are pinned to commit SHA, checkouts set
+  `persist-credentials: false`, and a restrictive top-level `permissions:`
+  is set per Checkov/`zizmor`'s findings on the workflow itself.
 - Docker image published to `ghcr.io/evictarr/evictarr` via GitHub Actions
   on every version tag (`vX.Y[.Z]`), built for `linux/amd64` and
   `linux/arm64`, tagged with both the release version and `latest`.
