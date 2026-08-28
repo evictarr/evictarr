@@ -1,0 +1,24 @@
+services:
+  evictarr-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: evictarr-test
+    restart: "no"
+    ports:
+      - "4379:4378"
+    volumes:
+      - ./config-test:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - CONFIG_DIR=/config
+      - DATABASE_URL=sqlite+aiosqlite:////config/evictarr.db
+    healthcheck:
+      # python:3.12-slim has no curl/wget, but python itself is always present.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4378/', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

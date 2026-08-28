@@ -1,0 +1,145 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 22px;
+  margin: 0;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab,
+.tabActive {
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tabActive {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deletionRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+}
+
+.overallStatus {
+  display: flex;
+  color: var(--color-danger);
+}
+
+.overallStatus[data-status='success'] {
+  color: var(--color-success);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.runType {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.timestamp {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  color: var(--color-text-muted);
+}
+
+.status[data-status='completed'] {
+  color: var(--color-success);
+}
+
+.status[data-status='failed'] {
+  color: var(--color-danger);
+}
+
+.counts {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.events {
+  border-top: 1px solid var(--color-border);
+  padding: 8px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.event {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.event[data-level='match'] {
+  color: var(--color-success);
+}
+
+.event[data-level='error'] {
+  color: var(--color-danger);
+}
+
+.eventTitle {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.eventReason {
+  color: var(--color-text-muted);
+}

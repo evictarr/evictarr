@@ -1,0 +1,24 @@
+services:
+  evictarr:
+    image: ghcr.io/evictarr/evictarr:latest
+    container_name: evictarr
+    restart: unless-stopped
+    ports:
+      - "4378:4378"
+    volumes:
+      - <path_to_your_evictarr_config_folder>:/config
+      - <path_to_yours_movies_library>:/movies:ro
+      - <path_to_yours_shows_library>:/shows:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=<your_timezone_ex.Europe/London>
+      # CONFIG_DIR and DATABASE_URL already default to /config in the image -
+      # only set these if you need something else (e.g. an external DB).
+    networks:
+      - media-network
+
+networks:
+  media-network:
+    external: true
+    name: <your_media_network_adapter_name>

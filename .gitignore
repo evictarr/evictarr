@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+backend/.venv/
+backend/dev.db*
+backend/.env
+backend/.secret_key
+backend/.encryption_key
+backend/*.egg-info/
+
+# Docker bind-mounted /config (db + auto-generated secrets)
+docker/config/
+docker/config-test/
+
+# Copied from docker-compose.yml.example and filled in with real values
+docker/docker-compose.yml
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+
+# Env
+.env
+.env.local
+
+# Editors / OS
+.DS_Store
