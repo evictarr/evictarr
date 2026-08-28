@@ -20,11 +20,11 @@ ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 
 # gosu drops root privileges after entrypoint.sh remaps the "evictarr" user
 # to the requested PUID/PGID - the initial uid/gid here is just a
-# placeholder, overwritten at container start.
-# hadolint ignore=DL3008 # unpinned intentionally: python:3.12-slim's apt
-# mirror only keeps the latest published version per suite, so a hard pin
-# here would eventually 404 and break the build rather than making it
-# reproducible.
+# placeholder, overwritten at container start. Left unpinned intentionally:
+# python:3.12-slim's apt mirror only keeps the latest published version per
+# suite, so a hard version pin here would eventually 404 and break the
+# build rather than making it reproducible.
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gosu \
     && rm -rf /var/lib/apt/lists/* \
