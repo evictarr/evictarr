@@ -15,12 +15,12 @@ os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{Path(_tmp_dir, 'test.db').as
 os.environ["CONFIG_DIR"] = _tmp_dir
 os.environ["SESSION_COOKIE_SECURE"] = "false"
 
-import pytest
-from httpx import ASGITransport, AsyncClient
+import pytest  # noqa: E402
+from httpx import ASGITransport, AsyncClient  # noqa: E402
 
-from app.bootstrap import ensure_app_settings
-from app.db.base import Base, async_session_factory, engine, get_db
-from app.main import app
+from app.bootstrap import ensure_app_settings  # noqa: E402
+from app.db.base import Base, async_session_factory, engine, get_db  # noqa: E402
+from app.main import app  # noqa: E402
 
 
 @pytest.fixture
@@ -46,3 +46,12 @@ async def client(db_session):
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def _reset_preview_cache():
+    from app.rules import engine as rules_engine
+
+    rules_engine._preview_cache = None
+    rules_engine._preview_cache_at = None
+    yield

@@ -19,8 +19,8 @@ async def _add_rule(db_session, rule_type, enabled=True):
 
 
 async def test_preview_merges_approaching_and_exempt_across_rule_types(db_session, monkeypatch):
-    movie_rule = await _add_rule(db_session, RuleType.movie_watched_cleanup)
-    series_rule = await _add_rule(db_session, RuleType.series_watched_cleanup)
+    await _add_rule(db_session, RuleType.movie_watched_cleanup)
+    await _add_rule(db_session, RuleType.series_watched_cleanup)
 
     async def fake_movie_evaluate(db, run_id, rule, ctx, dry_run=False):
         return RuleResult(items=[{"status": "approaching", "hours_remaining": 5.0, "watched_at": "2026-01-01T00:00:00"}])
