@@ -1,0 +1,6 @@
+# docker/Dockerfile intentionally has no static USER instruction: it starts
+# as root so entrypoint.sh can remap the "evictarr" user to the host's
+# PUID/PGID and chown /config, then gosu drops to that unprivileged user
+# for the actual app process. See docker/entrypoint.sh and the matching
+# #checkov:skip=CKV_DOCKER_3 comment in docker/Dockerfile.
+AVD-DS-0002

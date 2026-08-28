@@ -13,13 +13,14 @@ jobs:
       statuses: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           # Super-Linter needs the full commit history to lint only the changed files
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Run Super-Linter
-        uses: super-linter/super-linter@v8
+        uses: super-linter/super-linter@4ce20838b8ab83717e78138c5b3a1407148e0918 # v8.7.0
         env:
           VALIDATE_ALL_CODEBASE: false # Ensures it only lints new/modified files
           DEFAULT_BRANCH: main
@@ -40,13 +41,24 @@ jobs:
           VALIDATE_PYTHON_MYPY: false
 
           # JS/TS: the frontend already lints with oxlint (see
-          # frontend/.oxlintrc.json, `npm run lint`) - Super-Linter's
-          # ESLint/Prettier would duplicate that with a different,
-          # unconfigured rule set instead of complementing it.
+          # frontend/.oxlintrc.json, `npm run lint`) - ESLint/Prettier/Biome
+          # would each apply a different, unconfigured rule set on top of
+          # that instead of complementing it.
           VALIDATE_JAVASCRIPT_ES: false
           VALIDATE_JAVASCRIPT_PRETTIER: false
           VALIDATE_TYPESCRIPT_ES: false
           VALIDATE_TYPESCRIPT_PRETTIER: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
+
+          # Prose linters: too much unconfigured opinion for hand-written
+          # docs (JSCPD flags intentionally-overlapping doc snippets as
+          # "duplication"; textlint's default terminology rules flag normal
+          # words like "repo"). Markdown structure/syntax (MARKDOWN,
+          # MARKDOWN_PRETTIER) stays on - see .markdownlint.json for the
+          # one changelog-specific rule tweak.
+          VALIDATE_JSCPD: false
+          VALIDATE_NATURAL_LANGUAGE: false
 
   security:
     name: CodeQL Security Scan
@@ -57,10 +69,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
+        uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
         with:
           # Both are build-mode "none" (interpreted), so one init/analyze
           # pair covers both in a single job/check instead of splitting
@@ -68,4 +82,4 @@ jobs:
           languages: python, javascript-typescript
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
+        uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
