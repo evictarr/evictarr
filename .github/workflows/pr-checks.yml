@@ -25,14 +25,19 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # Python: ruff covers lint + import order in one fast tool. Setting
-          # any single VALIDATE_PYTHON_* to true switches Python into
-          # opt-in mode (only explicitly-true linters run), so this alone
-          # is enough to skip black/pylint/flake8/isort/mypy - none of
-          # which are part of this project's toolchain yet. Mixing true and
-          # false within the same language errors out Super-Linter's own
-          # config validation, so don't add explicit `false` lines here.
-          VALIDATE_PYTHON_RUFF: true
+          # Python: ruff covers lint + import order in one fast tool. The
+          # opt-in/opt-out choice is global across every VALIDATE_* var in
+          # this step, not per-language - any explicit `true` anywhere
+          # conflicts with the JS/TS `false`s below and fails Super-Linter's
+          # own config validation. So this stays in opt-out mode throughout:
+          # everything not explicitly disabled defaults to enabled, which is
+          # what leaves VALIDATE_PYTHON_RUFF running without listing it.
+          VALIDATE_PYTHON_BLACK: false
+          VALIDATE_PYTHON_RUFF_FORMAT: false
+          VALIDATE_PYTHON_PYLINT: false
+          VALIDATE_PYTHON_FLAKE8: false
+          VALIDATE_PYTHON_ISORT: false
+          VALIDATE_PYTHON_MYPY: false
 
           # JS/TS: the frontend already lints with oxlint (see
           # frontend/.oxlintrc.json, `npm run lint`) - Super-Linter's
