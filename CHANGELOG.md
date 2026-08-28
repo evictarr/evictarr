@@ -47,6 +47,12 @@ chosen.
 - Orphaned-file scan now logs a warning instead of silently scanning
   nothing when `MOVIES_LIBRARY_PATH`/`TV_LIBRARY_PATH` don't resolve to a
   mounted directory.
+- PR checks workflow: disabled `VALIDATE_TSX` and `VALIDATE_CSS` in
+  Super-Linter - both fought this project's actual conventions (the
+  pre-React-17 JSX transform assumption and Node-style import resolution
+  the TSX linter expects; the camelCase CSS Modules class names
+  `VALIDATE_CSS`'s kebab-case rule rejects) rather than catching real
+  issues. First surfaced once a PR actually touched frontend files.
 
 ## [0.1.0] - 2026-08-28
 
