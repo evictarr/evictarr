@@ -114,6 +114,26 @@ export interface PendingDeletion {
   cancelled_reason: string | null
 }
 
+export type WatchedStatus = 'approaching' | 'exempt'
+
+export interface WatchedStatusItem {
+  title: string
+  media_type: PendingMediaType
+  jellyfin_item_id: string | null
+  watched_at: string | null
+  rule_id: number
+  rule_name: string
+  status: WatchedStatus
+  threshold_value: number
+  threshold_unit: ThresholdUnit
+  hours_remaining: number | null
+}
+
+export interface WatchedStatusResponse {
+  approaching: WatchedStatusItem[]
+  exempt: WatchedStatusItem[]
+}
+
 export interface AppSettings {
   scheduler_time: string
   timezone: string
