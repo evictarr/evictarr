@@ -22,3 +22,12 @@ def is_past_threshold(reference: datetime | None, threshold_value: int, threshol
     if reference is None:
         return False
     return reference <= cutoff_datetime(threshold_value, threshold_unit)
+
+
+def time_until_threshold(reference: datetime | None, threshold_value: int, threshold_unit: ThresholdUnit) -> timedelta | None:
+    """How much longer until `reference` would satisfy is_past_threshold -
+    None if there's no reference at all, timedelta(0) if it's already past."""
+    if reference is None:
+        return None
+    remaining = reference - cutoff_datetime(threshold_value, threshold_unit)
+    return remaining if remaining > timedelta(0) else timedelta(0)

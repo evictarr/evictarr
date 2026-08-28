@@ -1,7 +1,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 28px;
 }
 
 .title {
@@ -13,4 +13,38 @@
   font-size: 14px;
   color: var(--color-text-muted);
   margin: 0;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--color-danger);
+  margin: 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  margin: 0;
+}
+
+.viewAllLink {
+  font-size: 13px;
+  color: var(--color-accent);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }

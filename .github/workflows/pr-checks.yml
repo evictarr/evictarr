@@ -49,13 +49,28 @@ jobs:
           # JS/TS: the frontend already lints with oxlint (see
           # frontend/.oxlintrc.json, `npm run lint`) - ESLint/Prettier/Biome
           # would each apply a different, unconfigured rule set on top of
-          # that instead of complementing it.
+          # that instead of complementing it. TSX is a separate category
+          # from TYPESCRIPT_ES (not just an extension of it) and its default
+          # config assumes the pre-React-17 JSX transform this project
+          # doesn't use (react/react-in-jsx-scope) plus Node-style import
+          # resolution that doesn't understand Vite's - same "unconfigured
+          # tool fighting the real toolchain" problem, not real findings.
           VALIDATE_JAVASCRIPT_ES: false
           VALIDATE_JAVASCRIPT_PRETTIER: false
           VALIDATE_TYPESCRIPT_ES: false
           VALIDATE_TYPESCRIPT_PRETTIER: false
+          VALIDATE_TSX: false
           VALIDATE_BIOME_FORMAT: false
           VALIDATE_BIOME_LINT: false
+
+          # CSS: stylelint's default selector-class-pattern demands
+          # kebab-case, but this codebase's CSS Modules classes are
+          # camelCase throughout (they're accessed as JS properties, e.g.
+          # styles.iconButton) - every existing *.module.css file would
+          # fail this, not just new ones. Prettier's CSS formatting stays
+          # on since it's a neutral formatter, not a naming-convention
+          # opinion.
+          VALIDATE_CSS: false
 
           # Prose linters: too much unconfigured opinion for hand-written
           # docs (JSCPD flags intentionally-overlapping doc snippets as

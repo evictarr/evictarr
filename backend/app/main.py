@@ -9,7 +9,9 @@ from fastapi.staticfiles import StaticFiles
 from app.api.routes import (
     action_log,
     auth,
+    dashboard,
     integrations,
+    media,
     notifications,
     orphaned_files,
     pending_deletions,
@@ -63,6 +65,8 @@ app.include_router(settings_routes.router)
 app.include_router(notifications.router)
 app.include_router(action_log.router)
 app.include_router(orphaned_files.router)
+app.include_router(dashboard.router)
+app.include_router(media.router)
 
 FRONTEND_DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 if FRONTEND_DIST.exists():
