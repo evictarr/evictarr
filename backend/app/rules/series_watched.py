@@ -7,10 +7,16 @@ from app.integrations.seerr_client import media_tvdb_id
 from app.integrations.sonarr_client import find_by_tvdb_id
 from app.rules.base import RuleResult, log_event
 from app.rules.context import RuleContext
-from app.rules.thresholds import is_past_threshold
+from app.rules.thresholds import is_past_threshold, time_until_threshold
 
 
-async def evaluate(db: AsyncSession, run_id: int, rule: Rule, ctx: RuleContext) -> RuleResult:
+async def evaluate(
+    db: AsyncSession,
+    run_id: int | None,
+    rule: Rule,
+    ctx: RuleContext,
+    dry_run: bool = False,
+) -> RuleResult:
     jellyfin = await ctx.client(ServiceName.jellyfin)
     user_id = await ctx.jellyfin_user_id()
     seerr = await ctx.client(ServiceName.seerr)
@@ -33,25 +39,63 @@ async def evaluate(db: AsyncSession, run_id: int, rule: Rule, ctx: RuleContext) 
                 result.scanned += 1
                 if not is_played(season):
                     continue
-                if not is_past_threshold(parse_last_played(season), rule.threshold_value, rule.threshold_unit):
-                    continue
 
                 season_number = season.get("IndexNumber")
                 title = f"{series_name} - Season {season_number}"
+                watched_at = parse_last_played(season)
+
+                if not is_past_threshold(watched_at, rule.threshold_value, rule.threshold_unit):
+                    if dry_run and watched_at is not None:
+                        result.items.append(
+                            {
+                                "title": title,
+                                "media_type": "season",
+                                "jellyfin_item_id": season.get("Id"),
+                                "watched_at": watched_at.isoformat(),
+                                "rule_id": rule.id,
+                                "rule_name": rule.name,
+                                "status": "approaching",
+                                "threshold_value": rule.threshold_value,
+                                "threshold_unit": rule.threshold_unit.value,
+                                "hours_remaining": time_until_threshold(
+                                    watched_at, rule.threshold_value, rule.threshold_unit
+                                ).total_seconds()
+                                / 3600,
+                            }
+                        )
+                    continue
 
                 if rule.exempt_favorite and (series_favorite or is_favorite(season)):
-                    await log_event(db, run_id, rule.id, EventLevel.skip, title, "favorited")
+                    if dry_run:
+                        result.items.append(
+                            {
+                                "title": title,
+                                "media_type": "season",
+                                "jellyfin_item_id": season.get("Id"),
+                                "watched_at": watched_at.isoformat() if watched_at else None,
+                                "rule_id": rule.id,
+                                "rule_name": rule.name,
+                                "status": "exempt",
+                                "threshold_value": rule.threshold_value,
+                                "threshold_unit": rule.threshold_unit.value,
+                                "hours_remaining": None,
+                            }
+                        )
+                    elif run_id is not None:
+                        await log_event(db, run_id, rule.id, EventLevel.skip, title, "favorited")
                     result.skipped += 1
                     continue
 
                 if not tvdb:
-                    await log_event(db, run_id, rule.id, EventLevel.error, title, "Jellyfin series has no TVDB id")
+                    if not dry_run and run_id is not None:
+                        await log_event(db, run_id, rule.id, EventLevel.error, title, "Jellyfin series has no TVDB id")
                     result.skipped += 1
                     continue
 
                 sonarr_entry = find_by_tvdb_id(sonarr_series, tvdb)
                 if sonarr_entry is None:
-                    await log_event(db, run_id, rule.id, EventLevel.error, title, "series not found in Sonarr")
+                    if not dry_run and run_id is not None:
+                        await log_event(db, run_id, rule.id, EventLevel.error, title, "series not found in Sonarr")
                     result.skipped += 1
                     continue
 
@@ -59,11 +103,16 @@ async def evaluate(db: AsyncSession, run_id: int, rule: Rule, ctx: RuleContext) 
                 external_ids = {
                     "media_type": "season",
                     "tvdb_id": tvdb,
+                    "jellyfin_item_id": season.get("Id"),
                     "sonarr_series_id": sonarr_entry["id"],
                     "season_number": season_number,
                     "seerr_request_id": seerr_request["id"] if seerr_request else None,
                 }
-                await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
+                if dry_run:
+                    result.matched += 1
+                    continue
+                if run_id is not None:
+                    await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
                 await stage(db, rule.id, PendingMediaType.season, title, external_ids, f"season:{tvdb}:{season_number}")
                 result.matched += 1
         return result
@@ -73,25 +122,63 @@ async def evaluate(db: AsyncSession, run_id: int, rule: Rule, ctx: RuleContext) 
         result.scanned += 1
         if not is_played(item):
             continue
-        if not is_past_threshold(parse_last_played(item), rule.threshold_value, rule.threshold_unit):
-            continue
 
         title = item.get("Name", "Unknown")
         tvdb = tvdb_id(item)
+        watched_at = parse_last_played(item)
+
+        if not is_past_threshold(watched_at, rule.threshold_value, rule.threshold_unit):
+            if dry_run and watched_at is not None:
+                result.items.append(
+                    {
+                        "title": title,
+                        "media_type": "series",
+                        "jellyfin_item_id": item.get("Id"),
+                        "watched_at": watched_at.isoformat(),
+                        "rule_id": rule.id,
+                        "rule_name": rule.name,
+                        "status": "approaching",
+                        "threshold_value": rule.threshold_value,
+                        "threshold_unit": rule.threshold_unit.value,
+                        "hours_remaining": time_until_threshold(
+                            watched_at, rule.threshold_value, rule.threshold_unit
+                        ).total_seconds()
+                        / 3600,
+                    }
+                )
+            continue
 
         if rule.exempt_favorite and is_favorite(item):
-            await log_event(db, run_id, rule.id, EventLevel.skip, title, "favorited")
+            if dry_run:
+                result.items.append(
+                    {
+                        "title": title,
+                        "media_type": "series",
+                        "jellyfin_item_id": item.get("Id"),
+                        "watched_at": watched_at.isoformat() if watched_at else None,
+                        "rule_id": rule.id,
+                        "rule_name": rule.name,
+                        "status": "exempt",
+                        "threshold_value": rule.threshold_value,
+                        "threshold_unit": rule.threshold_unit.value,
+                        "hours_remaining": None,
+                    }
+                )
+            elif run_id is not None:
+                await log_event(db, run_id, rule.id, EventLevel.skip, title, "favorited")
             result.skipped += 1
             continue
 
         if not tvdb:
-            await log_event(db, run_id, rule.id, EventLevel.error, title, "Jellyfin item has no TVDB id")
+            if not dry_run and run_id is not None:
+                await log_event(db, run_id, rule.id, EventLevel.error, title, "Jellyfin item has no TVDB id")
             result.skipped += 1
             continue
 
         sonarr_entry = find_by_tvdb_id(sonarr_series, tvdb)
         if sonarr_entry is None:
-            await log_event(db, run_id, rule.id, EventLevel.error, title, "not found in Sonarr")
+            if not dry_run and run_id is not None:
+                await log_event(db, run_id, rule.id, EventLevel.error, title, "not found in Sonarr")
             result.skipped += 1
             continue
 
@@ -99,10 +186,15 @@ async def evaluate(db: AsyncSession, run_id: int, rule: Rule, ctx: RuleContext) 
         external_ids = {
             "media_type": "series",
             "tvdb_id": tvdb,
+            "jellyfin_item_id": item.get("Id"),
             "sonarr_series_id": sonarr_entry["id"],
             "seerr_request_id": seerr_request["id"] if seerr_request else None,
         }
-        await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
+        if dry_run:
+            result.matched += 1
+            continue
+        if run_id is not None:
+            await log_event(db, run_id, rule.id, EventLevel.match, title, "watched past threshold", external_ids)
         await stage(db, rule.id, PendingMediaType.series, title, external_ids, f"series:{tvdb}")
         result.matched += 1
 
