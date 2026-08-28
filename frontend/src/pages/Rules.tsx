@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { FiEdit2, FiPlay, FiPlus, FiTrash2 } from 'react-icons/fi'
+import { FiEdit2, FiLoader, FiPlay, FiPlus, FiTrash2 } from 'react-icons/fi'
 import { api, ApiError } from '../api/client'
 import type { Rule, RuleFormValues, RuleType, SeriesGranularity, ThresholdUnit } from '../api/types'
 import styles from './Rules.module.css'
@@ -119,11 +119,11 @@ export function Rules() {
               <button
                 type="button"
                 className={styles.iconButton}
-                title="Run this rule now"
+                title={runningRuleId === rule.id ? 'Running...' : 'Run this rule now'}
                 onClick={() => handleRunNow(rule)}
                 disabled={runningRuleId === rule.id}
               >
-                <FiPlay />
+                {runningRuleId === rule.id ? <FiLoader className={styles.spin} /> : <FiPlay />}
               </button>
               <button type="button" className={styles.iconButton} title="Edit" onClick={() => setEditing(rule)}>
                 <FiEdit2 />
