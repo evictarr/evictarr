@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,7 @@ class RuleResult:
     scanned: int = 0
     matched: int = 0
     skipped: int = 0
+    items: list[dict] = field(default_factory=list)
 
 
 async def log_event(
