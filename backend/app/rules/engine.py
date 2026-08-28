@@ -59,3 +59,40 @@ async def run_scan(db: AsyncSession, run_type: RunType, triggered_by: str, rule_
         await notify_run_summary(db, run)
 
     return run
+
+
+_WATCHED_RULE_TYPES = (RuleType.movie_watched_cleanup, RuleType.series_watched_cleanup)
+
+# Looked up as modules (not `_HANDLERS`, which captures the `.evaluate`
+# function object at import time) so tests can monkeypatch
+# `movie_watched.evaluate` / `series_watched.evaluate` directly.
+_WATCHED_HANDLER_MODULES = {
+    RuleType.movie_watched_cleanup: movie_watched,
+    RuleType.series_watched_cleanup: series_watched,
+}
+
+
+async def preview_watched_status(db: AsyncSession) -> dict:
+    query = select(Rule).where(Rule.enabled == True, Rule.rule_type.in_(_WATCHED_RULE_TYPES))  # noqa: E712
+    rules = list((await db.execute(query)).scalars().all())
+
+    ctx = RuleContext(db)
+    approaching: list[dict] = []
+    exempt: list[dict] = []
+
+    for rule in rules:
+        handler_module = _WATCHED_HANDLER_MODULES[rule.rule_type]
+        try:
+            result = await handler_module.evaluate(db, None, rule, ctx, dry_run=True)
+        except IntegrationError:
+            continue
+        for item in result.items:
+            if item["status"] == "approaching":
+                approaching.append(item)
+            else:
+                exempt.append(item)
+
+    approaching.sort(key=lambda i: i["hours_remaining"])
+    exempt.sort(key=lambda i: i["watched_at"] or "", reverse=True)
+
+    return {"approaching": approaching, "exempt": exempt}
