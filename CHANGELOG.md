@@ -8,6 +8,8 @@ chosen.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-29
+
 ### Added
 
 - PR checks workflow (`.github/workflows/pr-checks.yml`) - Super-Linter and
@@ -87,5 +89,6 @@ Initial feature-complete build. All 7 planned phases done.
   together, embedded SQLite in a dedicated `/config` volume, PUID/PGID
   support, and auto-generated `SECRET_KEY`/`ENCRYPTION_KEY`.
 
-[Unreleased]: https://github.com/evictarr/evictarr/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/evictarr/evictarr/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/evictarr/evictarr/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/evictarr/evictarr/releases/tag/v0.1.0
