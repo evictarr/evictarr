@@ -8,6 +8,28 @@ chosen.
 
 ## [Unreleased]
 
+### Added
+
+- Header now shows a version badge - green when running the latest GitHub
+  release, yellow when a newer one is available - linking out to that
+  release's GitHub page in a new tab. Backed by a new `GET /api/version`
+  route.
+- README now has a Screenshots section (Dashboard, Rules, Pending
+  Deletions, History) under `docs/images/`.
+
+### Fixed
+
+- Series/season watched cleanup rules ("Series or season watched cleanup")
+  never matched, because Jellyfin doesn't stamp `LastPlayedDate` on the
+  Season/Series item itself, only on its episodes - the rule read it
+  straight off the season/series item and always got nothing, silently
+  treating every watched season/series as not yet due. Now derives
+  watched-at from the season's (or series') episodes instead. Movie
+  cleanup was unaffected.
+- Header layout is now responsive - it wraps and stacks instead of
+  overflowing the viewport on narrow screens, matching the page content
+  below it.
+
 ## [0.2.0] - 2026-08-29
 
 ### Added

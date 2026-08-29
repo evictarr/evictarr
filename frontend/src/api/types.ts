@@ -3,6 +3,10 @@ export interface SessionInfo {
   mfa_enabled: boolean
 }
 
+export interface VersionResponse {
+  version: string
+}
+
 export type AuthMethod = 'none' | 'basic'
 
 export interface AuthConfig {

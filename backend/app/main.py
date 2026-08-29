@@ -19,6 +19,7 @@ from app.api.routes import (
     rules,
     runs,
     settings as settings_routes,
+    version,
 )
 from app.bootstrap import ensure_app_settings
 from app.core.config import get_settings
@@ -67,6 +68,7 @@ app.include_router(action_log.router)
 app.include_router(orphaned_files.router)
 app.include_router(dashboard.router)
 app.include_router(media.router)
+app.include_router(version.router)
 
 FRONTEND_DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 if FRONTEND_DIST.exists():
