@@ -1,6 +1,6 @@
 [project]
 name = "evictarr"
-version = "0.1.0"
+version = "0.2.0"
 description = "Media stack cleanup companion for Jellyfin, Seerr, Radarr and Sonarr"
 requires-python = ">=3.12"
 dependencies = [
