@@ -12,6 +12,31 @@ removed) once the grace period elapses.
 [Security](docs/SECURITY.md) · [Changelog](CHANGELOG.md) ·
 [Versioning](docs/VERSIONING.md)
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/images/dashboard.png" alt="Dashboard - approaching cleanup, exempt, and pending deletion sections">
+      <p align="center"><sub>Dashboard - what's approaching cleanup, exempt, and pending deletion</sub></p>
+    </td>
+    <td width="50%">
+      <img src="docs/images/rules.png" alt="Rules page - configured cleanup rules list">
+      <p align="center"><sub>Rules - movie/series/season and stale request cleanup rules</sub></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="docs/images/pending.png" alt="Pending Deletions page - staged items with cancellable grace period countdown">
+      <p align="center"><sub>Pending Deletions - staged items with a cancellable grace period</sub></p>
+    </td>
+    <td width="50%">
+      <img src="docs/images/history.png" alt="History page - scan and deletion event log">
+      <p align="center"><sub>History - every scan and deletion, with outcomes</sub></p>
+    </td>
+  </tr>
+</table>
+
 ## Status
 
 All 7 phases are complete:

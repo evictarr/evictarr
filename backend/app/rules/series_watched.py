@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import EventLevel, PendingMediaType, Rule, ServiceName, SeriesGranularity
 from app.deletions.queue_service import stage
-from app.integrations.jellyfin_client import is_favorite, is_played, parse_last_played, tvdb_id
+from app.integrations.jellyfin_client import is_favorite, is_played, latest_played_at, tvdb_id
 from app.integrations.seerr_client import media_tvdb_id
 from app.integrations.sonarr_client import find_by_tvdb_id
 from app.rules.base import RuleResult, log_event
@@ -42,7 +42,11 @@ async def evaluate(
 
                 season_number = season.get("IndexNumber")
                 title = f"{series_name} - Season {season_number}"
-                watched_at = parse_last_played(season)
+                # Jellyfin never sets LastPlayedDate on the season item
+                # itself - only on its episodes - so it has to be derived
+                # from them instead of read off `season` directly.
+                episodes = await jellyfin.get_episodes(user_id, series_item["Id"], season["Id"])
+                watched_at = latest_played_at(episodes)
 
                 if not is_past_threshold(watched_at, rule.threshold_value, rule.threshold_unit):
                     if dry_run and watched_at is not None:
@@ -124,7 +128,10 @@ async def evaluate(
 
         title = item.get("Name", "Unknown")
         tvdb = tvdb_id(item)
-        watched_at = parse_last_played(item)
+        # Same deal as the season branch above: Series items don't carry
+        # their own LastPlayedDate, so pull it from the episodes.
+        episodes = await jellyfin.get_episodes(user_id, item["Id"])
+        watched_at = latest_played_at(episodes)
 
         if not is_past_threshold(watched_at, rule.threshold_value, rule.threshold_unit):
             if dry_run and watched_at is not None:

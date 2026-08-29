@@ -14,6 +14,7 @@ import {
   FiUser,
 } from 'react-icons/fi'
 import { useAuth } from '../api/AuthContext'
+import { VersionBadge } from './VersionBadge'
 import styles from './Layout.module.css'
 
 export function Layout() {
@@ -73,6 +74,7 @@ export function Layout() {
           )}
         </nav>
         <div className={styles.userArea}>
+          <VersionBadge />
           {authMethod === 'basic' && (
             <>
               <span className={styles.username}>{session?.username}</span>

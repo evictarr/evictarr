@@ -51,6 +51,13 @@ class JellyfinClient(BaseClient):
         )
         return response.json().get("Items", [])
 
+    async def get_episodes(self, user_id: str, series_id: str, season_id: str | None = None) -> list[dict]:
+        params = {"userId": user_id, "Fields": _ITEM_FIELDS}
+        if season_id is not None:
+            params["seasonId"] = season_id
+        response = await self.get(f"/Shows/{series_id}/Episodes", params=params)
+        return response.json().get("Items", [])
+
 
 def parse_last_played(item: dict) -> datetime | None:
     raw = item.get("UserData", {}).get("LastPlayedDate")
@@ -64,6 +71,16 @@ def parse_last_played(item: dict) -> datetime | None:
 
 def is_played(item: dict) -> bool:
     return bool(item.get("UserData", {}).get("Played"))
+
+
+def latest_played_at(items: list[dict]) -> datetime | None:
+    """Max LastPlayedDate across a list of items (e.g. a season/series'
+    episodes). Jellyfin never stamps LastPlayedDate on a Season or Series
+    item itself - only on the leaf item actually played (episode/movie) -
+    so a season/series "watched at" timestamp has to be aggregated from its
+    episodes instead of read off the folder item directly."""
+    dates = [d for d in (parse_last_played(i) for i in items) if d is not None]
+    return max(dates) if dates else None
 
 
 def is_favorite(item: dict) -> bool:
