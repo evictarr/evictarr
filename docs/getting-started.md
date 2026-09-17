@@ -8,7 +8,7 @@ library for things nobody's going to watch again - movies and shows you've
 already finished, or requests that were granted and then never watched - and
 removes them automatically, on a schedule, with a safety net.
 
-The problem it solves: Radarr and Sonarr are great at *adding* media, but
+The problem it solves: Radarr and Sonarr are great at _adding_ media, but
 they have no opinion about when to remove it. Left alone, a library only
 grows. Evictarr is the other half of that lifecycle - it decides what's
 safe to delete, tells you before it happens, and only actually deletes
@@ -52,7 +52,7 @@ A few things that fall out of this design:
   removal, Evictarr calls Radarr's or Sonarr's own delete API with
   `deleteFiles=true` - Radarr/Sonarr (which already have your media mounted)
   perform the actual file removal. Evictarr never needs write access to your
-  media library for this. (It optionally *reads* your library, read-only,
+  media library for this. (It optionally _reads_ your library, read-only,
   for the separate Orphaned Files report - see below.)
 - **A single process handles everything.** The web API and an in-process
   scheduler (daily rule scan + a periodic grace-period executor) run
@@ -120,7 +120,7 @@ anything marked as a favorite in Jellyfin:
   granularities: whole **series** (the entire show is watched and past
   threshold) or individual **season** (each season evaluated and matched
   independently, so a show can be partially cleaned up season by season).
-  For a show Jellyfin still reports as "Continuing", the *newest* season is
+  For a show Jellyfin still reports as "Continuing", the _newest_ season is
   never matched until Seerr confirms (via TMDB's per-season episode count)
   that every episode of that season has actually been released - otherwise
   Jellyfin would mark it "watched" as soon as you catch up on what's been
