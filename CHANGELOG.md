@@ -8,6 +8,8 @@ chosen.
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-09-17
+
 ### Fixed
 
 - Series watched cleanup (both the **season** and whole-**series**
@@ -128,7 +130,8 @@ Initial feature-complete build. All 7 planned phases done.
   together, embedded SQLite in a dedicated `/config` volume, PUID/PGID
   support, and auto-generated `SECRET_KEY`/`ENCRYPTION_KEY`.
 
-[Unreleased]: https://github.com/evictarr/evictarr/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/evictarr/evictarr/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/evictarr/evictarr/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/evictarr/evictarr/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/evictarr/evictarr/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/evictarr/evictarr/releases/tag/v0.1.0
