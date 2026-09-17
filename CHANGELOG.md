@@ -8,6 +8,23 @@ chosen.
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-09-17
+
+### Fixed
+
+- Series watched cleanup (both the **season** and whole-**series**
+  granularities) could delete the newest season of a still-airing show -
+  or, at series granularity, the entire show including its already-finished
+  earlier seasons. Jellyfin marks a season/series "Played" once every
+  episode it currently holds has been watched, with no idea whether the
+  season itself has finished releasing - so catching up on a show mid-run
+  (e.g. Ted Lasso season 4) got it staged for deletion a week before the
+  next episode. The newest season of a show Jellyfin reports as
+  "Continuing" is now only matched once Seerr confirms (via TMDB's
+  per-season episode count) that every episode of the season has actually
+  been released. Already-ended shows, and earlier seasons of an ongoing
+  show, are unaffected.
+
 ## [0.3.0] - 2026-08-29
 
 ### Added
@@ -113,7 +130,8 @@ Initial feature-complete build. All 7 planned phases done.
   together, embedded SQLite in a dedicated `/config` volume, PUID/PGID
   support, and auto-generated `SECRET_KEY`/`ENCRYPTION_KEY`.
 
-[Unreleased]: https://github.com/evictarr/evictarr/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/evictarr/evictarr/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/evictarr/evictarr/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/evictarr/evictarr/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/evictarr/evictarr/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/evictarr/evictarr/releases/tag/v0.1.0
