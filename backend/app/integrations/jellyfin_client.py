@@ -97,3 +97,9 @@ def tmdb_id(item: dict) -> str | None:
 
 def tvdb_id(item: dict) -> str | None:
     return item.get("ProviderIds", {}).get("Tvdb")
+
+
+def series_status(item: dict) -> str | None:
+    """Jellyfin's own metadata-provider status for a Series item, e.g.
+    "Continuing", "Ended". Not present on Season/Episode items."""
+    return item.get("Status")

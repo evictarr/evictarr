@@ -33,6 +33,13 @@ class SeerrClient(BaseClient):
     async def delete_request(self, request_id: int) -> None:
         await self.delete(f"/api/v1/request/{request_id}")
 
+    async def get_tv_details(self, tmdb_id: str) -> dict:
+        """Seerr's TV-details endpoint proxies TMDB metadata for any show by
+        TMDB id, independent of whether it was ever requested - used to find
+        out how many episodes a season is actually supposed to have."""
+        response = await self.get(f"/api/v1/tv/{tmdb_id}")
+        return response.json()
+
 
 def media_tmdb_id(request: dict) -> str | None:
     tmdb_id = request.get("media", {}).get("tmdbId")
@@ -50,3 +57,14 @@ def media_type(request: dict) -> str | None:
 
 def media_added_at(request: dict) -> str | None:
     return request.get("media", {}).get("mediaAddedAt")
+
+
+def season_episode_count(tv_details: dict, season_number: int) -> int | None:
+    """TMDB's expected episode count for one season of a show, as proxied by
+    Seerr's TV-details response. `None` if the season isn't listed at all
+    (unknown show, bad season number) or its count wasn't reported."""
+    for season in tv_details.get("seasons", []):
+        if season.get("seasonNumber") == season_number:
+            count = season.get("episodeCount")
+            return count if isinstance(count, int) and count > 0 else None
+    return None

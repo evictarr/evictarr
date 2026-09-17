@@ -8,6 +8,21 @@ chosen.
 
 ## [Unreleased]
 
+### Fixed
+
+- Series watched cleanup (both the **season** and whole-**series**
+  granularities) could delete the newest season of a still-airing show -
+  or, at series granularity, the entire show including its already-finished
+  earlier seasons. Jellyfin marks a season/series "Played" once every
+  episode it currently holds has been watched, with no idea whether the
+  season itself has finished releasing - so catching up on a show mid-run
+  (e.g. Ted Lasso season 4) got it staged for deletion a week before the
+  next episode. The newest season of a show Jellyfin reports as
+  "Continuing" is now only matched once Seerr confirms (via TMDB's
+  per-season episode count) that every episode of the season has actually
+  been released. Already-ended shows, and earlier seasons of an ongoing
+  show, are unaffected.
+
 ## [0.3.0] - 2026-08-29
 
 ### Added

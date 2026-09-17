@@ -120,6 +120,14 @@ anything marked as a favorite in Jellyfin:
   granularities: whole **series** (the entire show is watched and past
   threshold) or individual **season** (each season evaluated and matched
   independently, so a show can be partially cleaned up season by season).
+  For a show Jellyfin still reports as "Continuing", the *newest* season is
+  never matched until Seerr confirms (via TMDB's per-season episode count)
+  that every episode of that season has actually been released - otherwise
+  Jellyfin would mark it "watched" as soon as you catch up on what's been
+  downloaded so far, even with next week's episode still to come. At series
+  granularity this holds back the whole show, not just that one season;
+  earlier, already-complete seasons still get cleaned up on schedule under
+  season granularity.
 - **Stale request cleanup** - a Seerr request that was granted (media is
   available) but has **never been watched at all** since it was added, and
   that "added" date is older than the threshold. This catches requests
