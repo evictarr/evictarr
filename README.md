@@ -1,5 +1,8 @@
 # Evictarr
 
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red?logo=github-sponsors&logoColor=white)](https://github.com/sponsors/petruspinu)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/petruspinu)
+
 Media stack cleanup companion for Jellyfin, Seerr, Radarr and Sonarr. It
 scans your library for watched movies/seasons and stale requests, stages
 matches for deletion behind a cancellable grace period, then actually
@@ -74,13 +77,14 @@ All 7 phases are complete:
 Evictarr joins the docker network your Jellyfin/Seerr/Radarr/Sonarr stack
 already runs on - it does not stand up those services itself.
 
-```
+```bash
 cd docker
 cp docker-compose.yml.example docker-compose.yml
 ```
 
 Edit `docker/docker-compose.yml` directly - no separate `.env` file, just
 fill in the placeholders in place:
+
 - `<path_to_your_evictarr_config_folder>` - a host folder for Evictarr's
   own data (database, auto-generated secrets)
 - `<path_to_yours_movies_library>` / `<path_to_yours_shows_library>` - host
@@ -98,7 +102,7 @@ and persisted in `/config` alongside the database. `PUID`/`PGID` default to
 
 Then:
 
-```
+```bash
 docker compose up -d
 ```
 
@@ -121,7 +125,7 @@ on Basic authentication.
 
 Backend - uses a local SQLite file (dev.db), no external database needed:
 
-```
+```bash
 cd backend
 python -m venv .venv
 .venv/Scripts/pip install -e ".[dev]"
@@ -129,7 +133,7 @@ python -m venv .venv
 
 Create `backend/.env`:
 
-```
+```text
 DATABASE_URL=sqlite+aiosqlite:///dev.db
 SESSION_COOKIE_SECURE=false
 ```
@@ -138,7 +142,7 @@ SESSION_COOKIE_SECURE=false
 auto-generated on first run and persisted as `backend/.secret_key` /
 `backend/.encryption_key` (gitignored).
 
-```
+```bash
 .venv/Scripts/python -m alembic upgrade head
 .venv/Scripts/python -m uvicorn app.main:app --reload
 ```
@@ -146,7 +150,7 @@ auto-generated on first run and persisted as `backend/.secret_key` /
 Frontend (proxies `/api` to `http://127.0.0.1:8000` in dev, see
 `vite.config.ts`):
 
-```
+```bash
 cd frontend
 npm install
 npm run dev
@@ -157,7 +161,7 @@ npm run dev
 Evictarr has no email-based password recovery by design. If you're locked
 out:
 
-```
+```bash
 docker compose exec evictarr python -m app.cli reset-password --username admin --new-password ...
 docker compose exec evictarr python -m app.cli disable-mfa --username admin
 docker compose exec evictarr python -m app.cli disable-auth
@@ -168,3 +172,12 @@ one) and works even if no user exists yet. `disable-auth` is a further
 fallback that turns the login requirement off entirely (back to "None"),
 without touching the stored credentials - useful if you'd rather just open
 the app back up than reset a password.
+
+## Sponsorship
+
+Evictarr is free and open source, built and maintained in spare time. If it
+saves you from manually clearing out watched movies, stale requests and
+orphaned files, consider sponsoring its development through
+[GitHub Sponsors](https://github.com/sponsors/petruspinu) or
+[Ko-fi](https://ko-fi.com/petruspinu). It helps keep the project maintained
+and new features coming.
