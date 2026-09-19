@@ -1,5 +1,8 @@
 # Evictarr
 
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red?logo=github-sponsors&logoColor=white)](https://github.com/sponsors/petruspinu)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/petruspinu)
+
 Media stack cleanup companion for Jellyfin, Seerr, Radarr and Sonarr. It
 scans your library for watched movies/seasons and stale requests, stages
 matches for deletion behind a cancellable grace period, then actually
@@ -168,3 +171,12 @@ one) and works even if no user exists yet. `disable-auth` is a further
 fallback that turns the login requirement off entirely (back to "None"),
 without touching the stored credentials - useful if you'd rather just open
 the app back up than reset a password.
+
+## Sponsorship
+
+Evictarr is free and open source, built and maintained in spare time. If it
+saves you from manually clearing out watched movies, stale requests and
+orphaned files, consider sponsoring its development through
+[GitHub Sponsors](https://github.com/sponsors/petruspinu) or
+[Ko-fi](https://ko-fi.com/petruspinu). It helps keep the project maintained
+and new features coming.
