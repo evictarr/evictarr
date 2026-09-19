@@ -77,13 +77,14 @@ All 7 phases are complete:
 Evictarr joins the docker network your Jellyfin/Seerr/Radarr/Sonarr stack
 already runs on - it does not stand up those services itself.
 
-```
+```bash
 cd docker
 cp docker-compose.yml.example docker-compose.yml
 ```
 
 Edit `docker/docker-compose.yml` directly - no separate `.env` file, just
 fill in the placeholders in place:
+
 - `<path_to_your_evictarr_config_folder>` - a host folder for Evictarr's
   own data (database, auto-generated secrets)
 - `<path_to_yours_movies_library>` / `<path_to_yours_shows_library>` - host
@@ -101,7 +102,7 @@ and persisted in `/config` alongside the database. `PUID`/`PGID` default to
 
 Then:
 
-```
+```bash
 docker compose up -d
 ```
 
@@ -124,7 +125,7 @@ on Basic authentication.
 
 Backend - uses a local SQLite file (dev.db), no external database needed:
 
-```
+```bash
 cd backend
 python -m venv .venv
 .venv/Scripts/pip install -e ".[dev]"
@@ -132,7 +133,7 @@ python -m venv .venv
 
 Create `backend/.env`:
 
-```
+```text
 DATABASE_URL=sqlite+aiosqlite:///dev.db
 SESSION_COOKIE_SECURE=false
 ```
@@ -141,7 +142,7 @@ SESSION_COOKIE_SECURE=false
 auto-generated on first run and persisted as `backend/.secret_key` /
 `backend/.encryption_key` (gitignored).
 
-```
+```bash
 .venv/Scripts/python -m alembic upgrade head
 .venv/Scripts/python -m uvicorn app.main:app --reload
 ```
@@ -149,7 +150,7 @@ auto-generated on first run and persisted as `backend/.secret_key` /
 Frontend (proxies `/api` to `http://127.0.0.1:8000` in dev, see
 `vite.config.ts`):
 
-```
+```bash
 cd frontend
 npm install
 npm run dev
@@ -160,7 +161,7 @@ npm run dev
 Evictarr has no email-based password recovery by design. If you're locked
 out:
 
-```
+```bash
 docker compose exec evictarr python -m app.cli reset-password --username admin --new-password ...
 docker compose exec evictarr python -m app.cli disable-mfa --username admin
 docker compose exec evictarr python -m app.cli disable-auth
